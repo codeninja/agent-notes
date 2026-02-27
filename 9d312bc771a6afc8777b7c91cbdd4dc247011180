@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T17:46:03.044006","message":"Fixed a critical bug in auto-sync where adding a push refspec for notes would disable default branch pushing. Now explicitly includes 'refs/heads/*' in the push config.","data":null}
