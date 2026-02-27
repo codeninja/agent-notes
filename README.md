@@ -36,13 +36,16 @@ You can also use the CLI directly:
 
 ```bash
 # Add a decision note to the current commit
-agent-notes add "Refactored auth to use Pydantic for better validation" --type decision
+agent-notes add "Refactored auth to use Pydantic" --type decision
 
 # Show all agent notes for a commit
-agent-notes show HEAD --all
+agent-notes show HEAD --rich
 
-# Sync agent memory with the remote origin
-agent-notes sync
+# View a beautiful log of the last 20 commits with notes
+agent-notes log --limit 20
+
+# Review all notes between a feature branch and main
+agent-notes diff main
 ```
 
 ---
@@ -52,8 +55,10 @@ agent-notes sync
 When the MCP server is enabled, agents gain access to:
 
 - `add_agent_note`: Store reasoning or traces.
-- `show_agent_notes`: Read the "Decision Trail" left by previous agents or humans.
-- `sync_agent_notes`: Ensure the local memory is in sync with the team/origin.
+- `show_agent_notes`: Read the "Decision Trail".
+- `log_agent_notes`: Walk back through history (e.g., last 20 commits).
+- `diff_agent_notes`: Review notes between branches (e.g., `main..HEAD`).
+- `sync_agent_notes`: Ensure the local memory is in sync.
 
 ### Standard Namespaces
 - `refs/notes/agent/decision`: High-level "why" behind changes.
@@ -67,9 +72,11 @@ When the MCP server is enabled, agents gain access to:
 
 The `agent-notes-dx` tool simplifies the setup process:
 
-- `agent-notes-dx register-mcp`: Adds the server to your `claude_desktop_config.json`.
-- `agent-notes-dx init-project`: Creates `.claude/skills/agent-notes.md` in your repo to "teach" Claude how to use the memory.
-- `agent-notes-dx onboard`: Runs both of the above.
+- `agent-notes-dx onboard`: The "one-and-done" command. Registers the MCP server and initializes the current project.
+- `agent-notes-dx auto-sync`: Configures your local Git repo to **automatically fetch and push** agent notes during your normal `git pull` and `git push` workflow.
+- `agent-notes-dx init-project`: Creates `.claude/skills/agent-notes.md` in your repo.
+- `agent-notes-dx register-mcp`: Adds the server to your global Claude configuration.
+- `agent-notes-dx onboard-openclaw`: (Internal) Registers the skill with OpenClaw assistants.
 
 ---
 
