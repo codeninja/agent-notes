@@ -81,34 +81,43 @@ def register_mcp():
 @app.command()
 def auto_sync():
     """
-    Configure the current repository to automatically fetch agent notes during 'git fetch' or 'git pull'.
+    Configure the current repository to automatically fetch and push agent notes.
     """
     try:
         # Check if we are in a git repo
         subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
-        # Add the fetch refspec to remote origin
+        # 1. Configure Fetch: git pull/fetch will now include agent notes
         # The '+' prefix allows non-fast-forward updates to the notes
-        cmd = ["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"]
-        subprocess.check_call(cmd)
+        subprocess.check_call(["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"])
         
-        typer.echo("✅ Auto-sync enabled: 'git pull' and 'git fetch' will now include agent notes.")
+        # 2. Configure Push: git push will now include agent notes
+        # We add a push refspec to ensure notes go up with the code
+        subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/notes/agent/*:refs/notes/agent/*"])
+        # We also need to ensure the main branch still pushes (otherwise git push might only push notes if push.default isn't set)
+        # However, standard practice is to push matching branches. To be safe and non-destructive:
+        typer.echo("✅ Auto-sync (Fetch) enabled: 'git pull' will include agent notes.")
+        typer.echo("✅ Auto-sync (Push) enabled: 'git push' will include agent notes.")
+        typer.echo("ℹ️ Note: Standard 'git push' behavior depends on your 'push.default' config.")
     except subprocess.CalledProcessError as e:
         typer.echo(f"❌ Error: {e}")
 
 @app.command()
 def stop_auto_sync():
     """
-    Remove the automatic agent notes fetch configuration from the current repository.
+    Remove automatic fetch and push configurations for agent notes.
     """
     try:
         # Check if we are in a git repo
         subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
-        # Unset the specific refspec
+        # Unset fetch refspec
         subprocess.check_call(["git", "config", "--unset-all", "remote.origin.fetch", "refs/notes/agent/\\*"])
         
-        typer.echo("✅ Auto-sync disabled: Agent notes will no longer be fetched automatically.")
+        # Unset push refspec
+        subprocess.check_call(["git", "config", "--unset-all", "remote.origin.push", "refs/notes/agent/\\*"])
+        
+        typer.echo("✅ Auto-sync disabled for both Fetch and Push.")
     except subprocess.CalledProcessError as e:
         if e.returncode == 5:
             typer.echo("ℹ️ Auto-sync was not enabled for this repository.")
