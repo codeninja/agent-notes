@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T18:55:29.693058Z","message":"Updated the post-merge hook to use --rich output by default, providing a beautiful dashboard of agentic memory immediately after a pull.","data":null}
