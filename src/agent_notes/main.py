@@ -29,19 +29,26 @@ def get_repo():
 def get_note_ref(note_type: str):
     return f"refs/notes/agent/{note_type}"
 
+def get_default_agent_id():
+    return os.environ.get("AGENT_ID") or os.environ.get("USER") or "unknown-agent"
+
 @app.command()
 def add(
     message: str,
     type: str = typer.Option("decision", help="Note type (namespace)"),
-    agent_id: str = typer.Option("unknown-agent", help="Identifier of the agent"),
+    agent_id: str = typer.Option(None, help="Identifier of the agent (defaults to $AGENT_ID or $USER)"),
     ref: str = typer.Option("HEAD", help="Git reference to attach note to"),
     data: Optional[str] = typer.Option(None, help="JSON string of structured data"),
     force: bool = typer.Option(False, "--force", "-f", help="Overwrite existing note"),
 ):
     """Add an agentic note to a commit."""
     repo = get_repo()
+    
+    # Resolve agent_id
+    final_agent_id = agent_id or get_default_agent_id()
+    
     note_data = AgentNote(
-        agent_id=agent_id,
+        agent_id=final_agent_id,
         type=type,
         message=message,
         data=json.loads(data) if data else None
