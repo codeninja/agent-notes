@@ -3,6 +3,10 @@ name = "agent-notes"
 version = "0.1.0"
 description = "Agentic Memory via Git Notes"
 readme = "README.md"
+authors = [
+    { name = "Dallas Pool", email = "codeninja@gmail.com" }
+]
+license = { text = "MIT" }
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=3.0.2",
@@ -10,6 +14,10 @@ dependencies = [
     "pydantic>=2.12.5",
     "typer>=0.24.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/codeninja/agent-notes"
+Repository = "https://github.com/codeninja/agent-notes"
 
 [project.scripts]
 agent-notes = "agent_notes.main:app"

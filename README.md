@@ -8,6 +8,14 @@ By using custom namespaces (refs), agents can share a "collective memory" that s
 
 ---
 
+## 📦 Installation (from PyPI)
+
+```bash
+pip install agent-notes
+# OR using uv
+uv tool install agent-notes
+```
+
 ## 🚀 Quick Start (For Humans)
 
 ### 1. Install & Onboard
@@ -72,6 +80,22 @@ The `agent-notes-dx` tool simplifies the setup process:
 - **Metadata Only:** Notes are attached to commits but do not modify your source code or change commit hashes.
 - **Namespaced:** Uses `refs/notes/agent/*` to stay separate from standard user notes.
 - **Syncing:** Notes are only pushed/pulled when `agent-notes sync` (or the corresponding tool) is called.
+
+---
+
+## 🏗 Publishing (Internal)
+
+This project uses `uv` for publishing. To publish a new version:
+
+1. Update the version in `pyproject.toml`.
+2. Push a new tag: `git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0`.
+3. The GitHub Action will automatically build and publish to PyPI using the `PYPI_TOKEN` secret.
+
+Alternatively, to publish manually:
+```bash
+uv build
+uv publish --token $PYPI_TOKEN
+```
 
 ---
 *Created by Dallas Pool (@codeninja)*
