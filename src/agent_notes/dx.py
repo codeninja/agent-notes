@@ -90,18 +90,23 @@ def auto_sync():
         # Check if we are in a git repo
         subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
-        # 1. Configure Fetch: git pull/fetch will now include agent notes
-        # The '+' prefix allows non-fast-forward updates to the notes
+        # 1. Configure Fetch: Ensure standard heads AND agent notes are fetched
+        # We use --add to append to existing fetch refspecs
         subprocess.check_call(["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"])
         
-        # 2. Configure Push: git push will now include agent notes
-        # We add a push refspec to ensure notes go up with the code
-        subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/notes/agent/*:refs/notes/agent/*"])
-        # We also need to ensure the main branch still pushes (otherwise git push might only push notes if push.default isn't set)
-        # However, standard practice is to push matching branches. To be safe and non-destructive:
+        # 2. Configure Push: Ensure standard heads AND agent notes are pushed
+        # To avoid 'Everything up-to-date' errors for branches, we MUST include the heads refspec
+        # We first check if a push refspec already exists to avoid duplication
+        existing_push = subprocess.run(["git", "config", "--get-all", "remote.origin.push"], capture_output=True, text=True).stdout
+        
+        if "refs/heads/*:refs/heads/*" not in existing_push:
+            subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/heads/*:refs/heads/*"])
+        
+        if "refs/notes/agent/*:refs/notes/agent/*" not in existing_push:
+            subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/notes/agent/*:refs/notes/agent/*"])
+        
         typer.echo("✅ Auto-sync (Fetch) enabled: 'git pull' will include agent notes.")
-        typer.echo("✅ Auto-sync (Push) enabled: 'git push' will include agent notes.")
-        typer.echo("ℹ️ Note: Standard 'git push' behavior depends on your 'push.default' config.")
+        typer.echo("✅ Auto-sync (Push) enabled: 'git push' will include agent notes and all branches.")
     except subprocess.CalledProcessError as e:
         typer.echo(f"❌ Error: {e}")
 
