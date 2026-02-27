@@ -6,11 +6,49 @@ from pathlib import Path
 app = typer.Typer(help="Agent Notes Developer Experience Tools")
 
 @app.command()
-def onboard():
+def onboard(
+    init_project_repo: bool = typer.Option(True, "--init/--no-init", help="Automatically initialize the current project with the Claude skill")
+):
     """
     Onboard the current user by adding the agent-notes MCP server to the global Claude config.
     """
-    # ... (onboard logic) ...
+    config_path = Path.home() / ".claude_desktop_config.json"
+    if not config_path.exists():
+        # macOS default
+        config_path = Path.home() / "Library/Application Support/Claude/claude_desktop_config.json"
+    
+    project_path = Path(os.getcwd()).resolve()
+    mcp_command = "uv"
+    mcp_args = ["run", "--project", str(project_path), "python", "-m", "agent_notes.mcp"]
+    
+    new_server = {
+        "command": mcp_command,
+        "args": mcp_args
+    }
+    
+    if config_path.exists():
+        try:
+            config = json.loads(config_path.read_text())
+            if "mcpServers" not in config:
+                config["mcpServers"] = {}
+            
+            config["mcpServers"]["agent-notes"] = new_server
+            config_path.write_text(json.dumps(config, indent=2))
+            typer.echo(f"✅ Successfully added 'agent-notes' to {config_path}")
+        except Exception as e:
+            typer.echo(f"❌ Failed to update config: {e}")
+    else:
+        typer.echo(f"⚠️ Could not automatically locate Claude Desktop config.")
+        typer.echo("Please manually add the following entry to your mcpServers:")
+        typer.echo(json.dumps({"agent-notes": new_server}, indent=2))
+
+    if init_project_repo:
+        # Check if we are in a git repo before initializing
+        try:
+            subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
+            init_project()
+        except subprocess.CalledProcessError:
+            typer.echo("ℹ️ Not a git repository, skipping project initialization.")
 
 @app.command()
 def init_project():
