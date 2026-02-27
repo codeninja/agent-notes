@@ -4,6 +4,11 @@
 
 `agent-notes` is a library and MCP server that allows AI agents (like Claude Code, Windsurf, or OpenClaw) to store their implementation decisions, intent, and execution traces directly in Git commits using [**Git Notes**](https://git-scm.com/docs/git-notes). 
 
+### Why Git Notes?
+Unlike standard Markdown files or external databases, Git Notes allow for **atomic coupling** of reasoning to code without cluttering your history or causing merge collisions. 
+
+**[Read the full justification here →](docs/WHY_GIT_NOTES.md)**
+
 By using custom namespaces (refs), agents can share a "collective memory" that survives across sessions and is synced with the repository without polluting the main commit messages.
 
 ---
