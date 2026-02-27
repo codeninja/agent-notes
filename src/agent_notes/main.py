@@ -35,7 +35,8 @@ def add(
     type: str = typer.Option("decision", help="Note type (namespace)"),
     agent_id: str = typer.Option("unknown-agent", help="Identifier of the agent"),
     ref: str = typer.Option("HEAD", help="Git reference to attach note to"),
-    data: Optional[str] = typer.Option(None, help="JSON string of structured data")
+    data: Optional[str] = typer.Option(None, help="JSON string of structured data"),
+    force: bool = typer.Option(False, "--force", "-f", help="Overwrite existing note"),
 ):
     """Add an agentic note to a commit."""
     repo = get_repo()
@@ -51,7 +52,11 @@ def add(
     
     try:
         # GitPython doesn't have a direct notes wrapper, use git.execute
-        repo.git.execute(["git", "notes", "--ref", note_ref, "add", "-m", note_json, ref])
+        args = ["git", "notes", "--ref", note_ref, "add", "-m", note_json]
+        if force:
+            args.append("-f")
+        args.append(ref)
+        repo.git.execute(args)
         typer.echo(f"Successfully added {type} note to {ref}")
     except GitCommandError as e:
         typer.echo(f"Error adding note: {e}")
