@@ -112,7 +112,7 @@ def auto_sync():
         hooks_dir = Path(".git/hooks")
         if hooks_dir.exists():
             post_merge_hook = hooks_dir / "post-merge"
-            hook_content = "#!/bin/sh\n\necho '🦞 Agent Notes Feedback:'\nagent-notes diff ORIG_HEAD --head HEAD --plain || true\n"
+            hook_content = "#!/bin/sh\n\necho '🦞 Agent Notes Feedback:'\nagent-notes diff ORIG_HEAD --head HEAD --rich || true\n"
             post_merge_hook.write_text(hook_content)
             post_merge_hook.chmod(0o755)
             typer.echo("✅ Post-merge hook enabled: 'git pull' will now display new agent notes.")
