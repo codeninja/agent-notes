@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T18:54:01.024160Z","message":"Fixed post-merge hook syntax in auto-sync. The diff command expects --head for the second ref, not a positional argument.","data":null}
