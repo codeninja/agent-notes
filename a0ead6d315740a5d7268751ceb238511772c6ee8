@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-27T17:43:03.291684","message":"Updated the library to automatically resolve agent-id from AGENT_ID or USER environment variables to avoid 'unknown-agent' noise.","data":null}
