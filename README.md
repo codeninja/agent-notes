@@ -2,7 +2,7 @@
 
 **Persistent Agentic Memory embedded directly in your Git history.**
 
-`agent-notes` is a library and MCP server that allows AI agents (like Claude Code, Windsurf, or OpenClaw) to store their implementation decisions, intent, and execution traces directly in Git commits using **Git Notes**. 
+`agent-notes` is a library and MCP server that allows AI agents (like Claude Code, Windsurf, or OpenClaw) to store their implementation decisions, intent, and execution traces directly in Git commits using [**Git Notes**](https://git-scm.com/docs/git-notes). 
 
 By using custom namespaces (refs), agents can share a "collective memory" that survives across sessions and is synced with the repository without polluting the main commit messages.
 
