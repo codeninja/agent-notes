@@ -80,6 +80,17 @@ The `agent-notes-dx` tool simplifies the setup process:
 
 ---
 
+## ❓ Notes vs. Commit Messages
+
+Why not just put this in the commit message?
+
+- **Zero Pollution:** Keep your `git log` clean for human review. Agents can be as verbose as they need to be in the notes without cluttering the history.
+- **Post-Commit Context:** Unlike commit messages, notes can be added, updated, or appended to *after* a commit is pushed without changing the hash or requiring a force-push.
+- **Structured Channels:** Use namespaces (`decision`, `trace`, `intent`) to separate high-level reasoning from low-level execution logs.
+- **Machine Determinism:** Standard commit messages are unstructured text. Agent Notes are versioned JSON, allowing other agents to parse and "understand" the history with 100% accuracy.
+
+---
+
 ## 🏗 Tech Stack
 - **Python 3.12+** (managed via `uv`)
 - **Pydantic**: For structured, versioned memory schemas.
