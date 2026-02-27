@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T18:52:54.704055Z","message":"Fixed a bug where the --plain flag was missing from the diff command, causing post-merge hooks to fail. Also implemented beautiful Rich-based output for diffs.","data":null}
