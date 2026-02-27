@@ -26,3 +26,8 @@ agent-notes-dx = "agent_notes.dx:app"
 
 [tool.uv]
 package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

@@ -2,7 +2,7 @@ import typer
 from typing import Optional
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 from git import Repo, GitCommandError
 
@@ -15,7 +15,7 @@ class AgentNote(BaseModel):
     version: str = "1.0"
     agent_id: str
     type: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     message: str
     data: Optional[dict] = None
 
