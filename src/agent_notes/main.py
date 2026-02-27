@@ -6,7 +6,10 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from git import Repo, GitCommandError
 
-app = typer.Typer(help="Agentic Memory via Git Notes")
+app = typer.Typer(
+    help="Agentic Memory via Git Notes",
+    no_args_is_help=True
+)
 
 class AgentNote(BaseModel):
     version: str = "1.0"

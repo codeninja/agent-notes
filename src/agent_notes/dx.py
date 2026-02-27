@@ -4,7 +4,10 @@ import os
 import subprocess
 from pathlib import Path
 
-app = typer.Typer(help="Agent Notes Developer Experience Tools")
+app = typer.Typer(
+    help="Agent Notes Developer Experience Tools",
+    no_args_is_help=True
+)
 
 def get_mcp_config():
     project_path = Path(os.getcwd()).resolve()
