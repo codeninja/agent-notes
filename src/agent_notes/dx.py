@@ -32,17 +32,23 @@ def init_project():
     skill_dir.mkdir(parents=True, exist_ok=True)
     
     skill_content = """# Agent Notes Skill
-This skill allows you to record your implementation decisions and trace your work directly into the Git history using Git Notes.
+This skill allows you to record your implementation decisions and trace your work directly into the Git history using Git Notes. 
+
+## The Core Philosophy
+Agent Notes are NOT commit messages. 
+- **Commit Messages** are for humans; they describe *what* changed in the code.
+- **Agent Notes** are for the agentic chain; they describe the *why*, the *trade-offs*, and the *context* needed for the next agent to pick up where you left off.
 
 ## Rules
-1. ALWAYS record a 'decision' note after finishing a significant task.
-2. Use the 'intent' note to document the prompt or goal before starting.
-3. Use the 'sync_agent_notes' tool before and after your work loop.
+1. **The Handover:** Treat every 'decision' note as a technical handover to another senior engineer/agent. 
+2. **Distinct Reasoning:** Do not just repeat the commit message. Explain *why* you chose this approach, what alternatives you rejected, and any "gotchas" you discovered.
+3. **The Intent:** Use the 'intent' note *before* starting a task to document the goal.
+4. **Automated Feedback:** Always 'sync_agent_notes' before starting to see what your predecessors left for you.
 
 ## Tools
-- `add_agent_note(message, type, data)`: Add memory to the current commit.
-- `show_agent_notes(ref)`: See what other agents (or your past self) thought.
-- `sync_agent_notes()`: Push/pull memory from the cloud.
+- `add_agent_note(message, type, data)`: Add memory/handover to the current commit.
+- `show_agent_notes(ref)`: See the technical handover from past agents.
+- `sync_agent_notes()`: Push/pull the collective memory.
 """
     (skill_dir / "agent-notes.md").write_text(skill_content)
     typer.echo(f"✅ Initialized Claude Code skill in {skill_dir}/agent-notes.md")
@@ -163,21 +169,24 @@ description: Persistent Agentic Memory via Git Notes. Use this to record impleme
 
 # Agent Notes Skill
 
-This skill allows you to record your implementation decisions and trace your work directly in the Git history using [Git Notes](https://git-scm.com/docs/git-notes).
+This skill allows you to record technical handovers and implementation reasoning directly in the Git history, distinct from commit messages.
+
+## The Handover Philosophy
+Agent Notes facilitate a continuous "chain of thought" across multiple agent sessions.
+- **Commit Messages:** Summarize the code change for the human history.
+- **Agent Notes:** Provide a high-density technical handover for the next agent in the chain.
 
 ## Usage
-- ALWAYS record a 'decision' note after finishing a significant task.
-- Use the 'intent' note to document the goal before starting.
-- Use 'auto-sync' to ensure memory is pushed/pulled alongside code.
+- **Handover:** Treat the 'decision' note as a brain-dump for the next agent. Explain the "why," the rejected paths, and the mental model used.
+- **Context:** Use 'show_agent_notes' or 'agent-notes log' to load the technical handover from previous agents before starting.
+- **Sync:** Use 'auto-sync' to ensure the chain of thought is never broken.
 
 ## Tools (CLI via shell)
 - `agent-notes add "message" --type [decision|intent|trace|memory]`
 - `agent-notes log`
-- `agent-notes show HEAD`
 - `agent-notes-dx auto-sync`
 
 ## Integration
-This skill assumes `agent-notes` is installed in the python environment. 
 Path: `{project_root}`
 """
     (skill_target_dir / "SKILL.md").write_text(skill_content)
