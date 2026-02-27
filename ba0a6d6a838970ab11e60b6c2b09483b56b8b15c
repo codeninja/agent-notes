@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T19:00:23.989393Z","message":"Removed the commit summary from the log and diff Rich tables and plain output. This makes the output more token-efficient and relies on the agent note's message for context.","data":null}
