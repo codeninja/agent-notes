@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T19:00:56.620063Z","message":"Implemented GitHub commit linking in the Rich UI. Commit hashes in the log and diff tables are now clickable hyperlinks if a GitHub remote is detected.","data":null}
