@@ -1,2 +1,3 @@
 [console_scripts]
 agent-notes = agent_notes.main:app
+agent-notes-dx = agent_notes.dx:app

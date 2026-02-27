@@ -79,6 +79,43 @@ def register_mcp():
         typer.echo(json.dumps({"agent-notes": new_server}, indent=2))
 
 @app.command()
+def auto_sync():
+    """
+    Configure the current repository to automatically fetch agent notes during 'git fetch' or 'git pull'.
+    """
+    try:
+        # Check if we are in a git repo
+        subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
+        
+        # Add the fetch refspec to remote origin
+        # The '+' prefix allows non-fast-forward updates to the notes
+        cmd = ["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"]
+        subprocess.check_call(cmd)
+        
+        typer.echo("✅ Auto-sync enabled: 'git pull' and 'git fetch' will now include agent notes.")
+    except subprocess.CalledProcessError as e:
+        typer.echo(f"❌ Error: {e}")
+
+@app.command()
+def stop_auto_sync():
+    """
+    Remove the automatic agent notes fetch configuration from the current repository.
+    """
+    try:
+        # Check if we are in a git repo
+        subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
+        
+        # Unset the specific refspec
+        subprocess.check_call(["git", "config", "--unset-all", "remote.origin.fetch", "refs/notes/agent/\\*"])
+        
+        typer.echo("✅ Auto-sync disabled: Agent notes will no longer be fetched automatically.")
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 5:
+            typer.echo("ℹ️ Auto-sync was not enabled for this repository.")
+        else:
+            typer.echo(f"❌ Error: {e}")
+
+@app.command()
 def onboard():
     """
     Full onboarding: Register MCP server and initialize current project.
