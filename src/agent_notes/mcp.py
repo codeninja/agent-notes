@@ -44,6 +44,22 @@ def show_agent_notes(
         return f"Error: {str(e)}"
 
 @mcp.tool()
+def log_agent_notes(
+    limit: int = 20,
+    ref: str = "HEAD",
+    type: Optional[str] = None
+) -> str:
+    """
+    Retrieve agentic notes for the last N commits.
+    """
+    try:
+        from .main import log as log_cmd
+        log_cmd(limit=limit, ref=ref, type=type)
+        return "Log displayed in logs"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@mcp.tool()
 def diff_agent_notes(
     base: str = "main",
     head: str = "HEAD",

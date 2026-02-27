@@ -55,6 +55,43 @@ def add(
         raise typer.Exit(code=1)
 
 @app.command()
+def log(
+    limit: int = typer.Option(20, help="Number of commits to check for notes"),
+    ref: str = typer.Argument("HEAD", help="Git reference to start from"),
+    type: Optional[str] = typer.Option(None, help="Filter by note type"),
+):
+    """Show agentic notes for the last N commits."""
+    repo = get_repo()
+    
+    try:
+        commits = list(repo.iter_commits(ref, max_count=limit))
+        
+        if not commits:
+            typer.echo(f"No commits found starting from {ref}")
+            return
+
+        typer.echo(f"--- Agentic Notes: Last {len(commits)} commits starting from {ref} ---")
+        
+        types = [type] if type else ["decision", "trace", "memory", "intent"]
+        
+        for commit in commits:
+            commit_found = False
+            for t in types:
+                note_ref = get_note_ref(t)
+                try:
+                    content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
+                    if not commit_found:
+                        typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
+                        commit_found = True
+                    typer.echo(f"  [{t}]: {content}")
+                except GitCommandError:
+                    continue
+                    
+    except GitCommandError as e:
+        typer.echo(f"Error reading log: {e}")
+        raise typer.Exit(code=1)
+
+@app.command()
 def diff(
     base: str = typer.Argument("main", help="Base branch/ref to compare against"),
     head: str = typer.Option("HEAD", help="Head ref to compare from"),
