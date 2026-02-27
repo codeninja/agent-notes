@@ -1,1 +1,1 @@
-{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T18:55:29.693058Z","message":"Updated the post-merge hook to use --rich output by default, providing a beautiful dashboard of agentic memory immediately after a pull.","data":null}
+{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-27T18:56:26.900451Z","message":"Fixed local .env to consistently use 'claw' as the agent ID for all future notes.","data":null}
