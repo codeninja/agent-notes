@@ -151,6 +151,7 @@ def diff(
     base: str = typer.Argument("main", help="Base branch/ref to compare against"),
     head: str = typer.Option("HEAD", help="Head ref to compare from"),
     type: Optional[str] = typer.Option(None, help="Filter by note type"),
+    rich: bool = typer.Option(True, "--rich/--plain", help="Use Rich for beautiful output"),
 ):
     """Show all agentic notes for commits between base and head."""
     repo = get_repo()
@@ -167,28 +168,66 @@ def diff(
         commits = list(repo.iter_commits(f"{base}..{head}"))
         
         if not commits:
-            typer.echo(f"No new commits found between {base} and {head}")
+            if rich:
+                console.print(f"[yellow]No new commits found between {base} and {head}[/yellow]")
+            else:
+                typer.echo(f"No new commits found between {base} and {head}")
             return
 
-        typer.echo(f"--- Agentic Notes: {base}..{head} ({len(commits)} commits) ---")
-        
-        types = [type] if type else ["decision", "trace", "memory", "intent"]
-        
-        for commit in commits:
-            commit_found = False
-            for t in types:
-                note_ref = get_note_ref(t)
-                try:
-                    content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
-                    if not commit_found:
-                        typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
-                        commit_found = True
-                    typer.echo(f"  [{t}]: {content}")
-                except GitCommandError:
-                    continue
+        if rich:
+            table = Table(title=f"Agentic Memory: {base}..{head}", box=box.ROUNDED, expand=True)
+            table.add_column("Commit", style="cyan", no_wrap=True)
+            table.add_column("Summary", style="white")
+            table.add_column("Type", style="magenta")
+            table.add_column("Agent", style="green")
+            table.add_column("Message", style="italic")
+
+            types = [type] if type else ["decision", "trace", "memory", "intent"]
+            
+            for commit in commits:
+                commit_has_notes = False
+                for t in types:
+                    note_ref = get_note_ref(t)
+                    try:
+                        content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
+                        note_data = json.loads(content)
+                        table.add_row(
+                            commit.hexsha[:8],
+                            commit.summary[:40] + "..." if len(commit.summary) > 40 else commit.summary,
+                            t,
+                            note_data.get("agent_id", "unknown"),
+                            note_data.get("message", "")
+                        )
+                        commit_has_notes = True
+                    except (GitCommandError, json.JSONDecodeError):
+                        continue
+                if commit_has_notes:
+                    table.add_section()
+            
+            console.print(table)
+        else:
+            typer.echo(f"--- Agentic Notes: {base}..{head} ({len(commits)} commits) ---")
+            
+            types = [type] if type else ["decision", "trace", "memory", "intent"]
+            
+            for commit in commits:
+                commit_found = False
+                for t in types:
+                    note_ref = get_note_ref(t)
+                    try:
+                        content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
+                        if not commit_found:
+                            typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
+                            commit_found = True
+                        typer.echo(f"  [{t}]: {content}")
+                    except GitCommandError:
+                        continue
                     
     except GitCommandError as e:
-        typer.echo(f"Error calculating diff: {e}")
+        if rich:
+            console.print(f"[red]Error calculating diff: {e}[/red]")
+        else:
+            typer.echo(f"Error calculating diff: {e}")
         raise typer.Exit(code=1)
 
 @app.command()
