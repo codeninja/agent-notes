@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-27T17:43:21.191703","message":"Added 'onboard-openclaw' command to the DX CLI to automate skill registration for OpenClaw assistants.","data":null}
