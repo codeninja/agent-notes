@@ -1,60 +1,29 @@
 import typer
-import subprocess
+import json
 import os
+import subprocess
 from pathlib import Path
 
 app = typer.Typer(help="Agent Notes Developer Experience Tools")
 
-@app.command()
-def onboard(
-    init_project_repo: bool = typer.Option(True, "--init/--no-init", help="Automatically initialize the current project with the Claude skill")
-):
-    """
-    Onboard the current user by adding the agent-notes MCP server to the global Claude config.
-    """
-    config_path = Path.home() / ".claude_desktop_config.json"
-    if not config_path.exists():
-        # macOS default
-        config_path = Path.home() / "Library/Application Support/Claude/claude_desktop_config.json"
-    
+def get_mcp_config():
     project_path = Path(os.getcwd()).resolve()
-    mcp_command = "uv"
-    mcp_args = ["run", "--project", str(project_path), "python", "-m", "agent_notes.mcp"]
-    
-    new_server = {
-        "command": mcp_command,
-        "args": mcp_args
+    return {
+        "command": "uv",
+        "args": ["run", "--project", str(project_path), "python", "-m", "agent_notes.mcp"]
     }
-    
-    if config_path.exists():
-        try:
-            config = json.loads(config_path.read_text())
-            if "mcpServers" not in config:
-                config["mcpServers"] = {}
-            
-            config["mcpServers"]["agent-notes"] = new_server
-            config_path.write_text(json.dumps(config, indent=2))
-            typer.echo(f"✅ Successfully added 'agent-notes' to {config_path}")
-        except Exception as e:
-            typer.echo(f"❌ Failed to update config: {e}")
-    else:
-        typer.echo(f"⚠️ Could not automatically locate Claude Desktop config.")
-        typer.echo("Please manually add the following entry to your mcpServers:")
-        typer.echo(json.dumps({"agent-notes": new_server}, indent=2))
-
-    if init_project_repo:
-        # Check if we are in a git repo before initializing
-        try:
-            subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
-            init_project()
-        except subprocess.CalledProcessError:
-            typer.echo("ℹ️ Not a git repository, skipping project initialization.")
 
 @app.command()
 def init_project():
     """
     Initialize the current project with the agent-notes skill for Claude Code.
     """
+    try:
+        subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError:
+        typer.echo("❌ Error: Not a git repository. Cannot initialize project skill.")
+        return
+
     project_root = Path(os.getcwd())
     skill_dir = project_root / ".claude" / "skills"
     skill_dir.mkdir(parents=True, exist_ok=True)
@@ -74,6 +43,50 @@ This skill allows you to record your implementation decisions and trace your wor
 """
     (skill_dir / "agent-notes.md").write_text(skill_content)
     typer.echo(f"✅ Initialized Claude Code skill in {skill_dir}/agent-notes.md")
+
+@app.command()
+def register_mcp():
+    """
+    Add the agent-notes MCP server to the global Claude Desktop config.
+    """
+    config_paths = [
+        Path.home() / ".claude_desktop_config.json",
+        Path.home() / "Library/Application Support/Claude/claude_desktop_config.json",
+        Path.home() / "AppData/Roaming/Claude/claude_desktop_config.json"
+    ]
+    
+    config_path = None
+    for p in config_paths:
+        if p.exists():
+            config_path = p
+            break
+            
+    new_server = get_mcp_config()
+    
+    if config_path:
+        try:
+            config = json.loads(config_path.read_text())
+            if "mcpServers" not in config:
+                config["mcpServers"] = {}
+            
+            config["mcpServers"]["agent-notes"] = new_server
+            config_path.write_text(json.dumps(config, indent=2))
+            typer.echo(f"✅ Successfully registered MCP server in {config_path}")
+        except Exception as e:
+            typer.echo(f"❌ Failed to update config: {e}")
+    else:
+        typer.echo("⚠️ Could not locate Claude config. Manually add this to mcpServers:")
+        typer.echo(json.dumps({"agent-notes": new_server}, indent=2))
+
+@app.command()
+def onboard():
+    """
+    Full onboarding: Register MCP server and initialize current project.
+    """
+    typer.echo("🚀 Starting Agent Notes Onboarding...")
+    register_mcp()
+    init_project()
+    typer.echo("🎉 Onboarding complete.")
 
 if __name__ == "__main__":
     app()
