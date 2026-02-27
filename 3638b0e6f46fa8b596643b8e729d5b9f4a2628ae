@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T19:06:13.473244Z","message":"Renamed CLI entrypoints to 'agentnotes' and 'agentnotes-dx' to improve ergonomics and token efficiency. Updated README and skills to reflect the new command names.","data":null}
