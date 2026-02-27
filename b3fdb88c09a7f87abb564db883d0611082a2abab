@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"codeninja","type":"decision","timestamp":"2026-02-27T19:01:35.468701Z","message":"Bumped version to 0.2.1. Added GitHub commit linking in Rich UI and removed commit summaries for better efficiency.","data":null}
