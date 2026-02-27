@@ -78,6 +78,17 @@ console = Console()
 
 # ... (AgentNote class and existing helper functions) ...
 
+def get_remote_url(repo):
+    try:
+        url = repo.remote().url
+        if url.endswith(".git"):
+            url = url[:-4]
+        if url.startswith("git@github.com:"):
+            url = url.replace("git@github.com:", "https://github.com/")
+        return url
+    except Exception:
+        return None
+
 @app.command()
 def log(
     limit: int = typer.Option(20, help="Number of commits to check for notes"),
@@ -87,6 +98,7 @@ def log(
 ):
     """Show agentic notes for the last N commits."""
     repo = get_repo()
+    remote_url = get_remote_url(repo)
     
     try:
         commits = list(repo.iter_commits(ref, max_count=limit))
@@ -111,8 +123,14 @@ def log(
                     try:
                         content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
                         note_data = json.loads(content)
+                        
+                        commit_display = commit.hexsha[:8]
+                        if remote_url and "github.com" in remote_url:
+                            link = f"{remote_url}/commit/{commit.hexsha}"
+                            commit_display = f"[link={link}]{commit.hexsha[:8]}[/link]"
+
                         table.add_row(
-                            commit.hexsha[:8],
+                            commit_display,
                             t,
                             note_data.get("agent_id", "unknown"),
                             note_data.get("message", "")
@@ -153,6 +171,7 @@ def diff(
 ):
     """Show all agentic notes for commits between base and head."""
     repo = get_repo()
+    remote_url = get_remote_url(repo)
     
     # Check if 'main' or 'master' should be used if default is requested
     if base == "main":
@@ -188,8 +207,14 @@ def diff(
                     try:
                         content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
                         note_data = json.loads(content)
+
+                        commit_display = commit.hexsha[:8]
+                        if remote_url and "github.com" in remote_url:
+                            link = f"{remote_url}/commit/{commit.hexsha}"
+                            commit_display = f"[link={link}]{commit.hexsha[:8]}[/link]"
+
                         table.add_row(
-                            commit.hexsha[:8],
+                            commit_display,
                             t,
                             note_data.get("agent_id", "unknown"),
                             note_data.get("message", "")
