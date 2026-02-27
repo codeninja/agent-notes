@@ -91,22 +91,26 @@ def auto_sync():
         subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
         # 1. Configure Fetch: Ensure standard heads AND agent notes are fetched
-        # We check if it exists first to avoid duplicates
         existing_fetch = subprocess.run(["git", "config", "--get-all", "remote.origin.fetch"], capture_output=True, text=True).stdout
         if "refs/notes/agent/*:refs/notes/agent/*" not in existing_fetch:
             subprocess.check_call(["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"])
         
         # 2. Configure Push: Ensure standard heads AND agent notes are pushed
-        # Explicitly setting push refspecs overrides the default push behavior (push.default).
-        # To keep branch pushing working, we MUST include a heads refspec if we add any push refspec.
         existing_push = subprocess.run(["git", "config", "--get-all", "remote.origin.push"], capture_output=True, text=True).stdout
-        
         if "refs/heads/*:refs/heads/*" not in existing_push:
             subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/heads/*:refs/heads/*"])
-        
         if "refs/notes/agent/*:refs/notes/agent/*" not in existing_push:
             subprocess.check_call(["git", "config", "--add", "remote.origin.push", "refs/notes/agent/*:refs/notes/agent/*"])
         
+        # 3. Configure post-merge hook for automated feedback
+        hooks_dir = Path(".git/hooks")
+        if hooks_dir.exists():
+            post_merge_hook = hooks_dir / "post-merge"
+            hook_content = "#!/bin/sh\n\necho '🦞 Agent Notes Feedback:'\nagent-notes diff ORIG_HEAD HEAD --plain || true\n"
+            post_merge_hook.write_text(hook_content)
+            post_merge_hook.chmod(0o755)
+            typer.echo("✅ Post-merge hook enabled: 'git pull' will now display new agent notes.")
+
         typer.echo("✅ Auto-sync (Fetch) enabled: 'git pull' will include agent notes.")
         typer.echo("✅ Auto-sync (Push) enabled: 'git push' will include agent notes and all branches.")
     except subprocess.CalledProcessError as e:
@@ -115,24 +119,27 @@ def auto_sync():
 @app.command()
 def stop_auto_sync():
     """
-    Remove automatic fetch and push configurations for agent notes.
+    Remove automatic fetch, push, and hook configurations for agent notes.
     """
     try:
         # Check if we are in a git repo
-        subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
+        subprocess.check_output(["git-rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
-        # Unset fetch refspec
-        subprocess.check_call(["git", "config", "--unset-all", "remote.origin.fetch", "refs/notes/agent/\\*"])
+        # Unset refspecs
+        subprocess.run(["git", "config", "--unset-all", "remote.origin.fetch", "refs/notes/agent/\\*"], check=False)
+        subprocess.run(["git", "config", "--unset-all", "remote.origin.push", "refs/notes/agent/\\*"], check=False)
         
-        # Unset push refspec
-        subprocess.check_call(["git", "config", "--unset-all", "remote.origin.push", "refs/notes/agent/\\*"])
+        # Remove hook
+        post_merge_hook = Path(".git/hooks/post-merge")
+        if post_merge_hook.exists():
+            # Only remove if it's our hook
+            if "🦞 Agent Notes" in post_merge_hook.read_text():
+                post_merge_hook.unlink()
+                typer.echo("✅ Post-merge hook disabled.")
         
-        typer.echo("✅ Auto-sync disabled for both Fetch and Push.")
-    except subprocess.CalledProcessError as e:
-        if e.returncode == 5:
-            typer.echo("ℹ️ Auto-sync was not enabled for this repository.")
-        else:
-            typer.echo(f"❌ Error: {e}")
+        typer.echo("✅ Auto-sync disabled.")
+    except Exception as e:
+        typer.echo(f"❌ Error: {e}")
 
 @app.command()
 def onboard_openclaw():
