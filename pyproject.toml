@@ -5,6 +5,7 @@ description = "Agentic Memory via Git Notes"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastmcp>=3.0.2",
     "gitpython>=3.1.46",
     "pydantic>=2.12.5",
     "typer>=0.24.1",
@@ -12,6 +13,7 @@ dependencies = [
 
 [project.scripts]
 agent-notes = "agent_notes.main:app"
+agent-notes-dx = "agent_notes.dx:app"
 
 [tool.uv]
 package = true

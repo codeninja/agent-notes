@@ -1,0 +1,2 @@
+[console_scripts]
+agent-notes = agent_notes.main:app
