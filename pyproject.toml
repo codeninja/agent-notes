@@ -1,6 +1,6 @@
 [project]
 name = "agent-notes"
-version = "0.2.1"
+version = "0.2.2"
 description = "Agentic Memory via Git Notes"
 readme = "README.md"
 authors = [
@@ -21,8 +21,8 @@ Homepage = "https://github.com/codeninja/agent-notes"
 Repository = "https://github.com/codeninja/agent-notes"
 
 [project.scripts]
-agent-notes = "agent_notes.main:app"
-agent-notes-dx = "agent_notes.dx:app"
+agentnotes = "agent_notes.main:app"
+agentnotes-dx = "agent_notes.dx:app"
 
 [tool.uv]
 package = true

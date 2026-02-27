@@ -2,7 +2,7 @@
 
 **Persistent Agentic Memory embedded directly in your Git history.**
 
-`agent-notes` is a library and MCP server that allows AI agents (like Claude Code, Windsurf, or OpenClaw) to store their implementation decisions, intent, and execution traces directly in Git commits using [**Git Notes**](https://git-scm.com/docs/git-notes). 
+`agentnotes` is a library and MCP server that allows AI agents (like Claude Code, Windsurf, or OpenClaw) to store their implementation decisions, intent, and execution traces directly in Git commits using [**Git Notes**](https://git-scm.com/docs/git-notes). 
 
 ### Why Git Notes?
 Unlike standard Markdown files or external databases, Git Notes allow for **atomic coupling** of reasoning to code without cluttering your history or causing merge collisions. 
@@ -28,7 +28,7 @@ If you are using Claude Desktop or Claude Code, you can set everything up in one
 
 ```bash
 # Register the MCP server globally and initialize the current project
-uv run --project path/to/agent-notes agent-notes-dx onboard
+uv run --project path/to/agent-notes agentnotes-dx onboard
 ```
 
 ### 2. Manual Commands
@@ -36,16 +36,16 @@ You can also use the CLI directly:
 
 ```bash
 # Add a decision note to the current commit
-agent-notes add "Refactored auth to use Pydantic" --type decision
+agentnotes add "Refactored auth to use Pydantic" --type decision
 
 # Show all agent notes for a commit
-agent-notes show HEAD --rich
+agentnotes show HEAD --rich
 
 # View a beautiful log of the last 20 commits with notes
-agent-notes log --limit 20
+agentnotes log --limit 20
 
 # Review all notes between a feature branch and main
-agent-notes diff main
+agentnotes diff main
 ```
 
 ### 🔍 Multi-Channel Visibility
@@ -58,12 +58,12 @@ By default, the `log` and `diff` commands aggregate notes from **all namespaces*
 
 ## 📸 Screenshots
 
-### The Agentic Log (`agent-notes log`)
+### The Agentic Log (`agentnotes log`)
 The `log` command builds a structured dashboard of your project's technical history:
 
 ![Agent Notes Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log_table.png)
 
-### Technical Handover (`agent-notes show`)
+### Technical Handover (`agentnotes show`)
 Individual notes are wrapped in Rich Panels, making them easy to read:
 
 ![Agent Note Show Panel](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/show_panel.png)
@@ -80,23 +80,17 @@ When the MCP server is enabled, agents gain access to:
 - `diff_agent_notes`: Review notes between branches (e.g., `main..HEAD`).
 - `sync_agent_notes`: Ensure the local memory is in sync.
 
-### Standard Namespaces
-- `refs/notes/agent/decision`: High-level "why" behind changes.
-- `refs/notes/agent/intent`: The original prompt or goal.
-- `refs/notes/agent/trace`: Execution paths or tool-call logs.
-- `refs/notes/agent/memory`: Long-term context.
-
 ---
 
 ## 🛠 Developer Experience (DX) CLI
 
-The `agent-notes-dx` tool simplifies the setup process:
+The `agentnotes-dx` tool simplifies the setup process:
 
-- `agent-notes-dx onboard`: The "one-and-done" command. Registers the MCP server and initializes the current project.
-- `agent-notes-dx auto-sync`: Configures your local Git repo to **automatically fetch and push** agent notes during your normal `git pull` and `git push` workflow.
-- `agent-notes-dx init-project`: Creates `.claude/skills/agent-notes.md` in your repo.
-- `agent-notes-dx register-mcp`: Adds the server to your global Claude configuration.
-- `agent-notes-dx onboard-openclaw`: (Internal) Registers the skill with OpenClaw assistants.
+- `agentnotes-dx onboard`: The "one-and-done" command. Registers the MCP server and initializes the current project.
+- `agentnotes-dx auto-sync`: Configures your local Git repo to **automatically fetch and push** agent notes during your normal `git pull` and `git push` workflow.
+- `agentnotes-dx init-project`: Creates `.claude/skills/agentnotes.md` in your repo.
+- `agentnotes-dx register-mcp`: Adds the server to your global Claude configuration.
+- `agentnotes-dx onboard-openclaw`: (Internal) Registers the skill with OpenClaw assistants.
 
 ---
 
@@ -122,7 +116,7 @@ Why not just put this in the commit message?
 ## 🔒 Safety & Privacy
 - **Metadata Only:** Notes are attached to commits but do not modify your source code or change commit hashes.
 - **Namespaced:** Uses `refs/notes/agent/*` to stay separate from standard user notes.
-- **Syncing:** Notes are only pushed/pulled when `agent-notes sync` (or the corresponding tool) is called.
+- **Syncing:** Notes are only pushed/pulled when `agentnotes sync` (or the corresponding tool) is called.
 
 ---
 
@@ -131,7 +125,7 @@ Why not just put this in the commit message?
 This project uses `uv` for publishing. To publish a new version:
 
 1. Update the version in `pyproject.toml`.
-2. Push a new tag: `git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0`.
+2. Push a new tag: `git tag -a v0.2.2 -m "v0.2.2" && git push origin v0.2.2`.
 3. The GitHub Action will automatically build and publish to PyPI using the `PYPI_TOKEN` secret.
 
 Alternatively, to publish manually:

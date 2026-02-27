@@ -49,9 +49,13 @@ Agent Notes are NOT commit messages.
 - `add_agent_note(message, type, data)`: Add memory/handover to the current commit.
 - `show_agent_notes(ref)`: See the technical handover from past agents.
 - `sync_agent_notes()`: Push/pull the collective memory.
+
+## CLI (Shell)
+- `agentnotes add "message"`: Add a decision.
+- `agentnotes log`: View history.
 """
-    (skill_dir / "agent-notes.md").write_text(skill_content)
-    typer.echo(f"✅ Initialized Claude Code skill in {skill_dir}/agent-notes.md")
+    (skill_dir / "agentnotes.md").write_text(skill_content)
+    typer.echo(f"✅ Initialized Claude Code skill in {skill_dir}/agentnotes.md")
 
 @app.command()
 def register_mcp():
@@ -112,7 +116,7 @@ def auto_sync():
         hooks_dir = Path(".git/hooks")
         if hooks_dir.exists():
             post_merge_hook = hooks_dir / "post-merge"
-            hook_content = "#!/bin/sh\n\necho '🦞 Agent Notes Feedback:'\nagent-notes diff ORIG_HEAD --head HEAD --rich || true\n"
+            hook_content = "#!/bin/sh\n\necho '🦞 Agent Notes Feedback:'\nagentnotes diff ORIG_HEAD --head HEAD --rich || true\n"
             post_merge_hook.write_text(hook_content)
             post_merge_hook.chmod(0o755)
             typer.echo("✅ Post-merge hook enabled: 'git pull' will now display new agent notes.")
@@ -150,20 +154,20 @@ def stop_auto_sync():
 @app.command()
 def onboard_openclaw():
     """
-    Onboard the agent-notes skill to the local OpenClaw workspace.
+    Onboard the agentnotes skill to the local OpenClaw workspace.
     """
     workspace_skills_dir = Path("/home/codeninja/.openclaw/workspace/skills")
     if not workspace_skills_dir.exists():
         typer.echo("❌ Error: OpenClaw workspace skills directory not found at /home/codeninja/.openclaw/workspace/skills")
         return
 
-    skill_target_dir = workspace_skills_dir / "agent-notes"
+    skill_target_dir = workspace_skills_dir / "agentnotes"
     skill_target_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Create the OpenClaw SKILL.md
     project_root = Path(os.getcwd()).resolve()
     skill_content = f"""---
-name: agent-notes
+name: agentnotes
 description: Persistent Agentic Memory via Git Notes. Use this to record implementation decisions, intent, and execution traces directly in the Git history.
 ---
 
@@ -178,13 +182,13 @@ Agent Notes facilitate a continuous "chain of thought" across multiple agent ses
 
 ## Usage
 - **Handover:** Treat the 'decision' note as a brain-dump for the next agent. Explain the "why," the rejected paths, and the mental model used.
-- **Context:** Use 'show_agent_notes' or 'agent-notes log' to load the technical handover from previous agents before starting.
+- **Context:** Use 'show_agent_notes' or 'agentnotes log' to load the technical handover from previous agents before starting.
 - **Sync:** Use 'auto-sync' to ensure the chain of thought is never broken.
 
 ## Tools (CLI via shell)
-- `agent-notes add "message" --type [decision|intent|trace|memory]`
-- `agent-notes log`
-- `agent-notes-dx auto-sync`
+- `agentnotes add "message" --type [decision|intent|trace|memory]`
+- `agentnotes log`
+- `agentnotes-dx auto-sync`
 
 ## Integration
 Path: `{project_root}`
