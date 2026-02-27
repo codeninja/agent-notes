@@ -44,6 +44,23 @@ def show_agent_notes(
         return f"Error: {str(e)}"
 
 @mcp.tool()
+def diff_agent_notes(
+    base: str = "main",
+    head: str = "HEAD",
+    type: Optional[str] = None
+) -> str:
+    """
+    Retrieve all agentic notes for commits between a base ref and head.
+    Useful for reviewing progress in a feature branch before a merge.
+    """
+    try:
+        from .main import diff as diff_cmd
+        diff_cmd(base=base, head=head, type=type)
+        return "Diff displayed in logs"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@mcp.tool()
 def sync_agent_notes() -> str:
     """
     Sync agent notes with remote origin (push/pull refs).

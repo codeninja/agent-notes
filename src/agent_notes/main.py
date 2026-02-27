@@ -55,6 +55,51 @@ def add(
         raise typer.Exit(code=1)
 
 @app.command()
+def diff(
+    base: str = typer.Argument("main", help="Base branch/ref to compare against"),
+    head: str = typer.Option("HEAD", help="Head ref to compare from"),
+    type: Optional[str] = typer.Option(None, help="Filter by note type"),
+):
+    """Show all agentic notes for commits between base and head."""
+    repo = get_repo()
+    
+    # Check if 'main' or 'master' should be used if default is requested
+    if base == "main":
+        try:
+            repo.git.rev_parse("--verify", "main")
+        except GitCommandError:
+            base = "master"
+
+    try:
+        # Get list of commit hashes between base and head
+        commits = list(repo.iter_commits(f"{base}..{head}"))
+        
+        if not commits:
+            typer.echo(f"No new commits found between {base} and {head}")
+            return
+
+        typer.echo(f"--- Agentic Notes: {base}..{head} ({len(commits)} commits) ---")
+        
+        types = [type] if type else ["decision", "trace", "memory", "intent"]
+        
+        for commit in commits:
+            commit_found = False
+            for t in types:
+                note_ref = get_note_ref(t)
+                try:
+                    content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
+                    if not commit_found:
+                        typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
+                        commit_found = True
+                    typer.echo(f"  [{t}]: {content}")
+                except GitCommandError:
+                    continue
+                    
+    except GitCommandError as e:
+        typer.echo(f"Error calculating diff: {e}")
+        raise typer.Exit(code=1)
+
+@app.command()
 def show(
     ref: str = typer.Argument("HEAD", help="Git reference to show notes for"),
     type: Optional[str] = typer.Option(None, help="Filter by note type"),
