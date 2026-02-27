@@ -1,1 +1,1 @@
-{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-27T17:43:21.191703","message":"Added 'onboard-openclaw' command to the DX CLI to automate skill registration for OpenClaw assistants.","data":null}
+{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-27T17:43:50.427160","message":"Configured local .env to ensure all future notes are attributed to 'claw' by default.","data":null}
