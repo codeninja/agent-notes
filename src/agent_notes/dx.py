@@ -91,12 +91,14 @@ def auto_sync():
         subprocess.check_output(["git", "rev-parse", "--is-inside-work-tree"], stderr=subprocess.STDOUT)
         
         # 1. Configure Fetch: Ensure standard heads AND agent notes are fetched
-        # We use --add to append to existing fetch refspecs
-        subprocess.check_call(["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"])
+        # We check if it exists first to avoid duplicates
+        existing_fetch = subprocess.run(["git", "config", "--get-all", "remote.origin.fetch"], capture_output=True, text=True).stdout
+        if "refs/notes/agent/*:refs/notes/agent/*" not in existing_fetch:
+            subprocess.check_call(["git", "config", "--add", "remote.origin.fetch", "+refs/notes/agent/*:refs/notes/agent/*"])
         
         # 2. Configure Push: Ensure standard heads AND agent notes are pushed
-        # To avoid 'Everything up-to-date' errors for branches, we MUST include the heads refspec
-        # We first check if a push refspec already exists to avoid duplication
+        # Explicitly setting push refspecs overrides the default push behavior (push.default).
+        # To keep branch pushing working, we MUST include a heads refspec if we add any push refspec.
         existing_push = subprocess.run(["git", "config", "--get-all", "remote.origin.push"], capture_output=True, text=True).stdout
         
         if "refs/heads/*:refs/heads/*" not in existing_push:
