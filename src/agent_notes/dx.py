@@ -128,6 +128,50 @@ def stop_auto_sync():
             typer.echo(f"❌ Error: {e}")
 
 @app.command()
+def onboard_openclaw():
+    """
+    Onboard the agent-notes skill to the local OpenClaw workspace.
+    """
+    workspace_skills_dir = Path("/home/codeninja/.openclaw/workspace/skills")
+    if not workspace_skills_dir.exists():
+        typer.echo("❌ Error: OpenClaw workspace skills directory not found at /home/codeninja/.openclaw/workspace/skills")
+        return
+
+    skill_target_dir = workspace_skills_dir / "agent-notes"
+    skill_target_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Create the OpenClaw SKILL.md
+    project_root = Path(os.getcwd()).resolve()
+    skill_content = f"""---
+name: agent-notes
+description: Persistent Agentic Memory via Git Notes. Use this to record implementation decisions, intent, and execution traces directly in the Git history.
+---
+
+# Agent Notes Skill
+
+This skill allows you to record your implementation decisions and trace your work directly in the Git history using [Git Notes](https://git-scm.com/docs/git-notes).
+
+## Usage
+- ALWAYS record a 'decision' note after finishing a significant task.
+- Use the 'intent' note to document the goal before starting.
+- Use 'auto-sync' to ensure memory is pushed/pulled alongside code.
+
+## Tools (CLI via shell)
+- `agent-notes add "message" --type [decision|intent|trace|memory]`
+- `agent-notes log`
+- `agent-notes show HEAD`
+- `agent-notes-dx auto-sync`
+
+## Integration
+This skill assumes `agent-notes` is installed in the python environment. 
+Path: `{project_root}`
+"""
+    (skill_target_dir / "SKILL.md").write_text(skill_content)
+    
+    typer.echo(f"✅ Successfully onboarded 'agent-notes' skill to OpenClaw at {skill_target_dir}/SKILL.md")
+    typer.echo("ℹ️ OpenClaw will now recognize 'agent-notes' as an available skill.")
+
+@app.command()
 def onboard():
     """
     Full onboarding: Register MCP server and initialize current project.
