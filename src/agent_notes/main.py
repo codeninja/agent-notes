@@ -98,7 +98,6 @@ def log(
         if rich:
             table = Table(title=f"Agentic Memory: Last {len(commits)} commits", box=box.ROUNDED, expand=True)
             table.add_column("Commit", style="cyan", no_wrap=True)
-            table.add_column("Summary", style="white")
             table.add_column("Type", style="magenta")
             table.add_column("Agent", style="green")
             table.add_column("Message", style="italic")
@@ -114,7 +113,6 @@ def log(
                         note_data = json.loads(content)
                         table.add_row(
                             commit.hexsha[:8],
-                            commit.summary[:40] + "..." if len(commit.summary) > 40 else commit.summary,
                             t,
                             note_data.get("agent_id", "unknown"),
                             note_data.get("message", "")
@@ -137,7 +135,7 @@ def log(
                     try:
                         content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
                         if not commit_found:
-                            typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
+                            typer.echo(f"\nCOMMIT: {commit.hexsha[:8]}")
                             commit_found = True
                         typer.echo(f"  [{t}]: {content}")
                     except GitCommandError:
@@ -177,7 +175,6 @@ def diff(
         if rich:
             table = Table(title=f"Agentic Memory: {base}..{head}", box=box.ROUNDED, expand=True)
             table.add_column("Commit", style="cyan", no_wrap=True)
-            table.add_column("Summary", style="white")
             table.add_column("Type", style="magenta")
             table.add_column("Agent", style="green")
             table.add_column("Message", style="italic")
@@ -193,7 +190,6 @@ def diff(
                         note_data = json.loads(content)
                         table.add_row(
                             commit.hexsha[:8],
-                            commit.summary[:40] + "..." if len(commit.summary) > 40 else commit.summary,
                             t,
                             note_data.get("agent_id", "unknown"),
                             note_data.get("message", "")
@@ -217,7 +213,7 @@ def diff(
                     try:
                         content = repo.git.execute(["git", "notes", "--ref", note_ref, "show", commit.hexsha])
                         if not commit_found:
-                            typer.echo(f"\nCOMMIT: {commit.hexsha[:8]} - {commit.summary}")
+                            typer.echo(f"\nCOMMIT: {commit.hexsha[:8]}")
                             commit_found = True
                         typer.echo(f"  [{t}]: {content}")
                     except GitCommandError:
