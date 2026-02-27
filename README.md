@@ -98,8 +98,15 @@ This project uses `uv` for publishing. To publish a new version:
 
 Alternatively, to publish manually:
 ```bash
-uv build
-uv publish --token $PYPI_TOKEN
+make bump-patch  # or minor/major
+git commit -am "chore: bump version"
+make tag         # tags and pushes to trigger GitHub Action
+```
+
+Or fully manual:
+```bash
+make build
+make publish
 ```
 
 ---
