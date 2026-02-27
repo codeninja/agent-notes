@@ -1,7 +1,17 @@
 [project]
 name = "agent-notes"
 version = "0.1.0"
-description = "Add your description here"
+description = "Agentic Memory via Git Notes"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "gitpython>=3.1.46",
+    "pydantic>=2.12.5",
+    "typer>=0.24.1",
+]
+
+[project.scripts]
+agent-notes = "agent_notes.main:app"
+
+[tool.uv]
+package = true
