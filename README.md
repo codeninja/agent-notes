@@ -48,6 +48,26 @@ agent-notes log --limit 20
 agent-notes diff main
 ```
 
+### 🔍 Multi-Channel Visibility
+By default, the `log` and `diff` commands aggregate notes from **all namespaces** for every commit. This gives you a complete "Technical Handover" of everything that happened.
+
+- **Filter by Type:** Use `--type decision` to see only high-level reasoning.
+- **Rich Visualization:** Use `--rich` (default) for a structured dashboard or `--plain` for raw text.
+
+---
+
+## 📸 Screenshots
+
+### The Agentic Log (`agent-notes log`)
+The `log` command builds a structured dashboard of your project's technical history:
+
+![Agent Notes Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log_table.png)
+
+### Technical Handover (`agent-notes show`)
+Individual notes are wrapped in Rich Panels, making them easy to read:
+
+![Agent Note Show Panel](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/show_panel.png)
+
 ---
 
 ## 🤖 For Agents (MCP Tools)
