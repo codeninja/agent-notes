@@ -63,10 +63,31 @@ The `log` command builds a structured dashboard of your project's technical hist
 
 ![Agent Notes Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log_table.png)
 
+```text
+                         Agentic Memory: Last 5 commits                         
+╭──────────┬──────────┬───────────┬────────────────────────────────────────────╮
+│ Commit   │ Type     │ Agent     │ Message                                    │
+├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
+│ 792d19c7 │ decision │ claw      │ Bumped version to 0.2.3. Improved DX...    │
+├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
+│ f46c599b │ decision │ claw      │ Updated get_mcp_config for global installs │
+├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
+│ 3638b0e6 │ decision │ claw      │ Renamed CLI entrypoints to agentnotes      │
+╰──────────┴──────────┴───────────┴────────────────────────────────────────────╯
+```
+
 ### Technical Handover (`agentnotes show`)
 Individual notes are wrapped in Rich Panels, making them easy to read:
 
 ![Agent Note Show Panel](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/show_panel.png)
+
+```text
+╭─────────────────────────── Agent Note: decision ────────────────────────────╮
+│ Message: Added comprehensive test suite for the CLI and DX tools.           │
+│ Agent: claw                                                                 │
+│ Time: 2026-02-27T17:45:00Z                                                  │
+╰─────────────────────────────────────────────────────────────────────────────╯
+```
 
 ---
 
@@ -125,7 +146,7 @@ Why not just put this in the commit message?
 This project uses `uv` for publishing. To publish a new version:
 
 1. Update the version in `pyproject.toml`.
-2. Push a new tag: `git tag -a v0.2.2 -m "v0.2.2" && git push origin v0.2.2`.
+2. Push a new tag: `git tag -a v0.2.3 -m "v0.2.3" && git push origin v0.2.3`.
 3. The GitHub Action will automatically build and publish to PyPI using the `PYPI_TOKEN` secret.
 
 Alternatively, to publish manually:
