@@ -83,8 +83,6 @@ The `log` command builds a structured dashboard of your project's technical hist
 ### Technical Handover (`agentnotes show`)
 Individual notes are wrapped in Rich Panels, making them easy to read:
 
-![Agent Note Show Panel](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/show_panel.png)
-
 ```text
 ╭─────────────────────────── Agent Note: decision ────────────────────────────╮
 │ Message: Added comprehensive test suite for the CLI and DX tools.           │
