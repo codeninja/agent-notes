@@ -1,6 +1,6 @@
 [project]
 name = "agent-notes"
-version = "0.2.2"
+version = "0.2.3"
 description = "Agentic Memory via Git Notes"
 readme = "README.md"
 authors = [
