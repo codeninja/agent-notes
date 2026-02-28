@@ -61,29 +61,12 @@ By default, the `log` and `diff` commands aggregate notes from **all namespaces*
 ### The Agentic Log (`agentnotes log`)
 The `log` command builds a structured dashboard of your project's technical history:
 
-```text
-                         Agentic Memory: Last 5 commits                         
-╭──────────┬──────────┬───────────┬────────────────────────────────────────────╮
-│ Commit   │ Type     │ Agent     │ Message                                    │
-├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
-│ 792d19c7 │ decision │ claw      │ Bumped version to 0.2.3. Improved DX...    │
-├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
-│ f46c599b │ decision │ claw      │ Updated get_mcp_config for global installs │
-├──────────┼──────────┼───────────┼────────────────────────────────────────────┤
-│ 3638b0e6 │ decision │ claw      │ Renamed CLI entrypoints to agentnotes      │
-╰──────────┴──────────┴───────────┴────────────────────────────────────────────╯
-```
+![Agent Notes Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log_table.png)
 
 ### Technical Handover (`agentnotes show`)
 Individual notes are wrapped in Rich Panels, making them easy to read:
 
-```text
-╭─────────────────────────── Agent Note: decision ────────────────────────────╮
-│ Message: Added comprehensive test suite for the CLI and DX tools.           │
-│ Agent: claw                                                                 │
-│ Time: 2026-02-27T17:45:00Z                                                  │
-╰─────────────────────────────────────────────────────────────────────────────╯
-```
+![Agent Note Show Panel](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/show_panel.png)
 
 ---
 
