@@ -61,8 +61,12 @@ By default, the `log` and `diff` commands aggregate notes from **all namespaces*
 ### The Agentic Log (`agentnotes log`)
 The `log` command builds a structured dashboard of your project's technical history:
 
-![Agent Notes Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log_table.png)
+#### Pretty Logs
 
+![Agent Notes Pretty Log Table](https://raw.githubusercontent.com/codeninja/agent-notes/main/docs/assets/log.png)
+
+
+#### Text based console logs
 ```text
                          Agentic Memory: Last 5 commits                         
 ╭──────────┬──────────┬───────────┬────────────────────────────────────────────╮
