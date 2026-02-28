@@ -1,0 +1,1 @@
+{"version":"1.0","agent_id":"claw","type":"decision","timestamp":"2026-02-28T02:25:19.021278Z","message":"Updated get_mcp_config to detect if it should use 'uv run --project' (dev) or 'agentnotes mcp' (global). Added 'mcp' subcommand to the main entrypoint.","data":null}
