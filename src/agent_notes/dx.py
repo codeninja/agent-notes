@@ -10,11 +10,20 @@ app = typer.Typer(
 )
 
 def get_mcp_config():
+    # If we are in a development environment (editable install), use --project
+    # Otherwise, assume global installation via 'agentnotes' entrypoint
     project_path = Path(os.getcwd()).resolve()
-    return {
-        "command": "uv",
-        "args": ["run", "--project", str(project_path), "python", "-m", "agent_notes.mcp"]
-    }
+    if (project_path / "pyproject.toml").exists() and (project_path / "src" / "agent_notes").exists():
+        return {
+            "command": "uv",
+            "args": ["run", "--project", str(project_path), "python", "-m", "agent_notes.mcp"]
+        }
+    else:
+        # Global package installation
+        return {
+            "command": "agentnotes",
+            "args": ["mcp"]
+        }
 
 @app.command()
 def init_project():

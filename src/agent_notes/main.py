@@ -304,5 +304,11 @@ def sync():
     except GitCommandError as e:
         typer.echo(f"Sync failed: {e}")
 
+@app.command()
+def mcp():
+    """Run the FastMCP server."""
+    from .mcp import mcp as mcp_server
+    mcp_server.run()
+
 if __name__ == "__main__":
     app()
